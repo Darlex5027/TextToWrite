@@ -1,5 +1,6 @@
-import pyttsx3
+#import pyttsx3
 import time
+import os
 import math
 import re
 import keyboard
@@ -48,9 +49,9 @@ book.write(book_text)
 book.close()
 book=open("nuevo"+libro,'r')
 book_text=book.readlines()
-engine = pyttsx3.Engine()
+#engine = pyttsx3.Engine()
 
-engine.setProperty( "rate", 100 )
+#engine.setProperty( "rate", 100 )
  
 
 i=1  
@@ -95,8 +96,10 @@ def impPart(habla,i,p,linea):
     if(pasa):
         linea=0;
         print(habla)
-        engine.say(habla)#re.split(r"[,.;:]+", line)[element])           
-        engine.runAndWait()
+        comando = "espeak"+habla
+        os.system(comando)
+        #engine.say(habla)#re.split(r"[,.;:]+", line)[element])           
+        #engine.runAndWait()
         time.sleep(peace)
         while True:
             if not a.wait:
