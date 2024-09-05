@@ -96,7 +96,7 @@ def impPart(habla,i,p,linea):
     if(pasa):
         linea=0;
         print(habla)
-        comando = "espeak"+habla
+        comando = "espeak "+habla
         os.system(comando)
         #engine.say(habla)#re.split(r"[,.;:]+", line)[element])           
         #engine.runAndWait()
