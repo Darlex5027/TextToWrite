@@ -1,0 +1,199 @@
+Finalmente, la visión relacional permite una evaluación más clara del 
+alcance y las limitaciones lógicas de los sistemas de datos formateados 
+actuales , y también de los méritos relativos (desde un punto de vista lógico ) 
+de representaciones de datos en competencia dentro de un solo sistema. En 
+varias partes de este artículo se citan ejemplos de esta perspectiva más 
+clara . No se analizan las implementaciones de sistemas para soportar el 
+modelo relacional .
+
+1.2. DEPENDENCIAS DE DATOS EN LOS SISTEMAS ACTUALES
+La provisión de tablas de descripción de datos en sistemas de información 
+desarrollados recientemente representa un avance importante hacia el 
+objetivo de la independencia de los datos [5, 6, 7]. Estas tablas facilitan el 
+cambio de ciertas características de la representación de los datos 
+almacenados en un banco de datos . Sin embargo, la variedad de 
+características de representación de datos que se pueden cambiar sin 
+perjudicar lógicamente a algunos programas de aplicación es todavía 
+bastante limitada. Además, el modelo de datos con el que interactúan los 
+usuarios todavía está plagado de propiedades representacionales , 
+particularmente en lo que respecta a la representación de colecciones de 
+datos (a diferencia de elementos individuales ). Tres de los principales tipos 
+de dependencias de datos que aún deben eliminarse son: dependencia de 
+ordenación, dependencia de indexación y dependencia de ruta de acceso . 
+En algunos sistemas estas dependencias no son claramente separables 
+entre sí.
+
+1.2.1. Dependencia del ordenamiento . Los elementos de datos de un 
+banco de datos pueden almacenarse de diversas maneras: algunas no 
+implican ninguna preocupación por el ordenamiento, otras permiten que cada 
+elemento participe en un solo ordenamiento y otras permiten que cada 
+elemento participe en varios ordenamientos. Consideremos aquellos sistemas 
+existentes que requieren o permiten que los elementos de datos se almacenen 
+en al menos un orden total que está estrechamente asociado con el orden 
+de direcciones determinado por el hardware . Por ejemplo, los registros de 
+un archivo relativos a piezas podrían almacenarse en orden ascendente por 
+número de serie de la pieza . Dichos sistemas normalmente permiten que los 
+programas de aplicación asuman que el orden de presentación de los 
+registros de dicho archivo es idéntico (o es un suborden de) el
+pedido almacenado.
+
+Es probable que las ventajas del orden almacenado de un archivo no 
+funcionen correctamente si por alguna razón es necesario reemplazar ese 
+orden por uno diferente. Observaciones similares son válidas para un orden 
+almacenado implementado mediante punteros.
+
+No es necesario señalar ningún sistema como ejemplo,
+porque todos los sistemas de información conocidos que se comercializan 
+hoy en día no logran hacer una distinción clara entre el orden de presentación, 
+por un lado, y el orden almacenado , por otro . Los problemas importantes de 
+implementación deben ser resuelto a proporcionar este tipo de independencia.
+
+1.2.2. Dependencia de indexación . En el contexto de los datos 
+formateados , normalmente se piensa que un índice es un componente 
+puramente orientado al rendimiento de la representación de los datos . Tiende 
+a mejorar la respuesta a consultas y actualizaciones y, al mismo tiempo, 
+ralentiza la respuesta a inserciones y eliminaciones. Desde un punto de vista 
+informativo , un índice es un componente redundante de la representación de 
+datos. Si un sistema utiliza índices y quiere funcionar bien en un entorno con 
+patrones cambiantes de actividad en el banco de datos , probablemente será 
+necesaria la capacidad de crear y destruir índices de vez en cuando . Entonces 
+surge la pregunta : ¿Pueden los programas de aplicación y las actividades de 
+la terminal permanecer invariantes a medida que los índices van y vienen?      
+
+Los sistemas de datos formateados actuales adoptan medidas muy diferentes.
+Volumen 13 / Número 6 / Junio, 1970
+resuelto a proporcionar este tipo de independencia.
+enfoques para la indexación. TDMS [7] proporciona incondicionalmente 
+indexación de todos los atributos. La versión actualmente lanzada de IMS [5] 
+ofrece al usuario una opción para cada archivo: la posibilidad de elegir entre 
+no indexar en absoluto (la organización secuencial jerárquica ) o indexar sólo 
+en la clave principal (la organización secuencial indexada jerárquica ). En 
+ningún caso la lógica de la aplicación del usuario depende de la existencia 
+de los índices proporcionados incondicionalmente . IDS [8], sin embargo, 
+permite a los diseñadores de archivos seleccionar atributos a indexar e 
+incorporar índices en la estructura del archivo mediante cadenas adicionales . 
+Los programas de aplicación que aprovechan el beneficio de rendimiento de 
+estas cadenas de indexación deben hacer referencia a esas cadenas por su 
+nombre. Estos programas no funcionan correctamente si estas cadenas se 
+eliminan posteriormente .
+
+1.2.3. Dependencia de la ruta de acceso. Muchos de los existentes
+Los sistemas de datos formateados proporcionan a los usuarios archivos
+estructurados en árbol o modelos de red de datos ligeramente más generales.
+Los programas de aplicación desarrollados para trabajar con estos sistemas
+tienden a verse lógicamente perjudicados si se cambia la estructura de los
+árboles o redes. A continuación se muestra un ejemplo sencillo.
+
+Supongamos que el banco de datos contiene información sobre piezas y
+proyectos. Para cada pieza, se registran el número de pieza, el nombre de la
+pieza, la descripción de la pieza, la cantidad disponible y la cantidad pedida.
+Para cada proyecto, se registran el número del proyecto, el nombre del
+proyecto y la descripción del proyecto. Siempre que un proyecto hace uso de
+una determinada parte, también se registra la cantidad de esa parte
+comprometida para el proyecto en cuestión. Supongamos que el sistema
+requiere que el usuario o diseñador de archivos declare o defina los datos en
+términos de estructuras de árbol. Luego, se puede adoptar cualquiera de las
+estructuras jerárquicas para la información mencionada anteriormente (ver
+Estructuras 1-5).
+
+Ahora, considere el problema de imprimir el número de pieza, el nombre
+de la pieza y la cantidad comprometida para cada pieza utilizada en el
+proyecto cuyo nombre de proyecto es "alfa". Se pueden hacer las siguientes
+observaciones independientemente del sistema de información disponible
+orientado a árboles que se seleccione para abordar este problema. Si se
+desarrolla un programa P para este problema suponiendo una de las cinco
+estructuras anteriores (es decir, P no realiza ninguna prueba para determinar
+qué estructura está en vigor), entonces P fallará en al menos tres de las
+estructuras restantes. Más específicamente, si P tiene éxito con la estructura
+5, fracasará con todas las demás; si P tiene éxito con la estructura 3 o 4,
+fracasará con al menos 1, 2 y 5; si P tiene éxito con la estructura
+1 o 2, fallará al menos con 3, 4 y 5. La razón es simple en cada caso. En
+ausencia de una prueba para determinar qué estructura está vigente, P falla
+porque se intenta ejecutar una referencia a un archivo inexistente (los
+sistemas disponibles tratan esto como un error) o no se intenta ejecutar una
+referencia a un archivo que contiene la información necesaria.
+
+El lector que no esté convencido debería desarrollar programas de muestra
+para este sencillo problema.
+
+Dado que, en general, no es práctico desarrollar programas de aplicación
+que prueben todas las estructuras de árbol permitidas por el sistema, estos
+programas fallan cuando se hace necesario un cambio en la estructura.
+
+Los sistemas que proporcionan a los usuarios un modelo de red de los
+datos se topan con dificultades similares. Tanto en el caso del árbol como en
+el de la red, el usuario (o su programa) debe explotar una colección de rutas
+de acceso de los usuarios a los datos. No importa si estas rutas están en
+estrecha correspondencia con las rutas definidas por punteros en la
+representación almacenada: en IDS la correspondencia es extremadamente
+simple, en TDMS es todo lo contrario. La consecuencia, independientemente
+de la representación almacenada, es que las actividades y programas del
+terminal pasan a depender de la existencia continuada de las rutas de acceso
+del usuario.
+
+Una solución a esto es adoptar la política de que una vez que se define
+una ruta de acceso de usuario no quedará obsoleta hasta que todos los
+programas de aplicación que utilizan esa ruta se hayan vuelto obsoletos.
+Semejante política no es práctica, porque el número de vías de acceso en el
+modelo total para la comunidad de usuarios de un banco de datos acabaría
+siendo excesivamente grande.
+
+1.3 UNA VISIÓN RELACIONAL DE LOS DATOS
+
+El término relación se utiliza aquí en su sentido matemático aceptado.
+Dados conjuntos S, S,..., S (no
+necesariamente distintos), R es una relación en estos n conjuntos si es
+un conjunto de n-tuplas, cada una de las cuales tiene su primer elemento de
+S, su segundo elemento de S2, y así sucesivamente. Nosotros lo haremos
+referirse a S; como el dominio j de R. Como se definió anteriormente, R es
+se dice que tiene grado n. Las relaciones de grado 1 a menudo se denominan
+unario, binario de grado 2, ternario de grado 3 y grado n-.   
+
+Por razones expositivas, frecuentemente haremos uso de una
+representación matricial de relaciones, pero debe recordarse que esta
+representación particular no es una parte esencial de la visión relacional que
+se expone. 
+
+El rayo que representa una relación n-aria R tiene las siguientes propiedades:
+
+(1) Cada fila representa una n-tupla de R.
+(2) El orden de las filas es irrelevante.
+(3) Todas las filas son distintas.
+(4) El orden de las columnas es significativo: corresponde
+responde al ordenamiento S, S,..., S, del dominio
+red en la que se define R (véanse, sin embargo, las observaciones
+a continuación sobre relaciones ordenadas y desordenadas por
+dominio).
+(5) El significado de cada columna está parcialmente condicionado.
+veed etiquetándolo con el nombre de la correspondiente
+dominio.   
+
+El ejemplo de la Figura 1 ilustra una relación de grado
+4, llamado suministro, que refleja los envíos en curso de piezas de proveedores
+específicos a proyectos específicos en cantidades específicas.
+
+Uno podría preguntarse: si las columnas están etiquetadas con el nombre
+de los dominios correspondientes, ¿por qué debería importar el orden de las
+columnas? Como muestra el ejemplo de la Figura 2, dos columnas pueden
+tener títulos idénticos (que indican dominios idénticos) pero poseer significados
+distintos con respecto a la relación. La relación representada se llama
+componente. Es una relación ternaria, cuyos dos primeros dominios se
+denominan parte y el tercer dominio se denomina cantidad. El significado del
+componente (a, z) es que la parte a es un componente inmediato (o
+subconjunto) de la parte, y se necesitan z unidades de la parte z para
+ensamblar una unidad de la parte y. Es una relación que juega un papel crítico
+en el problema de la explosión de piezas.
+
+
+Es un hecho notable que varios sistemas de información existentes
+(principalmente aquellos basados en archivos con estructura de árbol) no
+proporcionan representaciones de datos para relaciones que tienen dos o
+más dominios idénticos. La versión actual de IMS/360 [5] es un ejemplo de
+dicho sistema.
+
+La totalidad de los datos de un banco de datos puede verse como una
+conjunto de relaciones que varían en el tiempo. Estas relaciones son de
+diversos grados. A medida que avanza el tiempo, cada relación n-aria puede
+estar sujeta a la inserción de n-tuplas adicionales, la eliminación de las
+existentes y la alteración de los componentes de cualquiera de sus n-tuplas
+existentes.
