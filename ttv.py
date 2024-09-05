@@ -115,7 +115,7 @@ class Get(object):
         self.wait = not self.wait
 
 a = Get()
-keyboard.on_press_key("space", a.do_this)
+#keyboard.on_press_key("space", a.do_this)
 
 #def arriba():
 #    main
