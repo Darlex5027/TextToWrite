@@ -3,7 +3,7 @@ import time
 import os
 import math
 import re
-import keyboard
+
 #Nombre del libro
 libro="MOV.txt"
 
